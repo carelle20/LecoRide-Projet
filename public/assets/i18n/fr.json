@@ -1,0 +1,45 @@
+{
+  "APP": {
+    "TITLE": "Créer votre compte",
+    "CHOOSE_LANG": "Choisir la langue",
+    "LOGIN": "Se connecter"
+  },
+  "FORM": {
+    "FIRST_NAME": "Prénom",
+    "LAST_NAME": "Nom",
+    "EMAIL_PHONE": "Email ou numéro de téléphone",
+    "EMAIL_PHONE_PLACEHOLDER": "example@domaine.com ou 6XXXXXXXX",
+    "PASSWORD": "Mot de passe",
+    "PASSWORD_PLACEHOLDER": "Minimum 8 caractères",
+    "CONSENT": "J'accepte les termes et conditions.",
+    "SUBMIT": "S'inscrire",
+    "SUBMITTING": "Inscription en cours...",
+    "CHECKING": "Vérification de disponibilité...",
+    "ERROR": {
+      "REQUIRED": "Ce champ est requis.",
+      "EMAIL_OR_PHONE_INVALID": "Veuillez saisir un email valide ou un numéro de téléphone valide.",
+      "EMAIL_PHONE_TAKEN": "Cet email ou numéro de téléphone est déjà utilisé.",
+      "PASSWORD_MIN_LENGTH": "Le mot de passe doit contenir au moins 8 caractères.",
+      "CONSENT_REQUIRED": "Vous devez accepter les termes et conditions.",
+      "EMAIL_PHONE_TAKEN_API": "Cet email/numéro est déjà utilisé. Veuillez vous connecter.",
+      "BAD_REQUEST_API": "Les données envoyées sont invalides. Veuillez vérifier le formulaire.",
+      "GENERIC_API_ERROR": "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
+      "FORM_INVALID": "Veuillez corriger les erreurs dans le formulaire."
+    },
+    "PASSWORD_METER": {
+      "START_TYPING": "Commencez à taper votre mot de passe...",
+      "MIN_LENGTH": "Minimum 8 caractères",
+      "ADD_LOWERCASE": "Le mot de passe doit contenir au moins une minuscule",
+      "ADD_UPPERCASE": "Le mot de passe doit contenir au moins une majuscule",
+      "ADD_DIGIT": "Le mot de passe doit contenir au moins un chiffre",
+      "ADD_SYMBOL": "Le mot de passe doit contenir au moins un caractere special",
+      "WEAK": "Mot de passe faible",
+      "MEDIUM": "Mot de passe moyen",
+      "STRONG": "Mot de passe fort",
+      "VERY_STRONG": "Mot de passe très fort",
+      "COMPLEX": "Mot de passe complexe",
+      "SOLID": "Mot de passe solide"
+    },
+    "SUCCESS_MESSAGE": "Inscription réussie ! Un email de confirmation a été envoyé."
+  }
+}

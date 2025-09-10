@@ -1,0 +1,46 @@
+{
+  "APP": {
+    "TITLE": "Create your account",
+    "CHOOSE_LANG": "Choose language",
+    "LOGIN": "Log In"
+
+  },
+  "FORM": {
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "EMAIL_PHONE": "Email or phone number",
+    "EMAIL_PHONE_PLACEHOLDER": "example@domain.com or 6XXXXXXXX",
+    "PASSWORD": "Password",
+    "PASSWORD_PLACEHOLDER": "Minimum 8 characters",
+    "CONSENT": "I accept the terms and conditions.",
+    "SUBMIT": "Sign Up",
+    "SUBMITTING": "Signing up...",
+    "CHECKING": "Checking availability...",
+    "ERROR": {
+      "REQUIRED": "This field is required.",
+      "EMAIL_OR_PHONE_INVALID": "Please enter a valid email or phone number.",
+      "EMAIL_PHONE_TAKEN": "This email or phone number is already taken.",
+      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
+      "CONSENT_REQUIRED": "You must accept the terms and conditions.",
+      "EMAIL_PHONE_TAKEN_API": "This email/phone is already in use. Please log in.",
+      "BAD_REQUEST_API": "The submitted data is invalid. Please check the form.",
+      "GENERIC_API_ERROR": "An error occurred during registration. Please try again.",
+      "FORM_INVALID": "Please correct the errors in the form."
+    },
+    "PASSWORD_METER": {
+      "START_TYPING": "Start typing your password...",
+      "MIN_LENGTH": "Minimum 8 characters",
+      "ADD_LOWERCASE": "Password must be content lowercase letters",
+      "ADD_UPPERCASE": "Password must be content uppercase letters",
+      "ADD_DIGIT": "Password must be content numbers",
+      "ADD_SYMBOL": "Password must be content symbol",
+      "WEAK": "Weak password",
+      "MEDIUM": "Medium password",
+      "STRONG": "Strong password",
+      "VERY_STRONG": "Very strong password",
+      "COMPLEX": "Complex password",
+      "SOLID": "Solid password"
+    },
+    "SUCCESS_MESSAGE": "Registration successful! A confirmation email has been sent."
+  }
+}
