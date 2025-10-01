@@ -1,0 +1,58 @@
+<div class="otp-container">
+  <h2>Vérification du numéro de téléphone</h2>
+  <p>
+    Veuillez entrer le code à <strong>{{ otpLength }}</strong> chiffres envoyé par SMS
+    au numéro <strong>{{ phone }}</strong>.
+  </p>
+
+  <form [formGroup]="otpForm" (ngSubmit)="submitOtp()">
+    <div class="otp-inputs-wrapper">
+      @for (digit of otpDigits; track $index) {
+        <input
+          #otpInput
+          type="text"
+          class="otp-input"
+          [attr.id]="'otp-digit-' + $index"
+          [attr.aria-label]="'Chiffre OTP ' + ($index + 1)"
+          maxlength="1"
+          autocomplete="one-time-code"
+          inputmode="numeric"
+          [formControlName]="'digit' + $index"
+          (input)="onInput($event, $index)"
+          (keydown)="onKeydown($event, $index)"
+          (paste)="onPaste($event)"
+        />
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (isBlocked) {
+      <p class="block-message">
+        Trop de tentatives échouées.<br />
+        Veuillez réessayer dans <strong>{{ blockRemainingTime }} secondes</strong>.
+      </p>
+    } @else {
+      <button type="submit" class="verify-button" [disabled]="otpForm.invalid || isBlocked">
+        Vérifier le code
+      </button>
+
+      <div class="resend-section">
+        <p>Vous n’avez pas reçu le code ?</p>
+        <button
+          type="button"
+          (click)="resendOtp()"
+          [disabled]="isResendDisabled"
+          class="resend-button"
+        >
+          Renvoyer le code
+          @if (isResendDisabled && resendCooldown > 0) {
+            ({{ resendCooldown }}s)
+          }
+        </button>
+      </div>
+    }
+  </form>
+</div>

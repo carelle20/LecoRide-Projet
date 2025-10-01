@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     TranslateModule
   ],
   templateUrl: './password-meter.html',
-  styleUrl: './password-meter.scss'
+  styleUrls: ['./password-meter.scss']
 })
 export class PasswordMeter implements OnChanges {
   @Input() password: string = '';
@@ -69,7 +69,7 @@ export class PasswordMeter implements OnChanges {
       score += 1;
     }
 
-    //definition du niveau de force et de la couleur
+    //definition du niveau de complexite et de la couleur
     if (score <2) {
       this.strength.level = 1;
       this.strength.barColor = 'red';

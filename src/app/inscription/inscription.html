@@ -1,144 +1,145 @@
-<div class="inscription-container">
-  <h2>{{ 'APP.TITLE' | translate }}</h2> 
+<section class="form-container">
+  <div class="inscription-container">
+    <h2>{{ 'APP.TITLE' | translate }}</h2> 
 
-  <!-- Global Error Message Display -->
-  <div *ngIf="errorMessage" class="api-error-message" role="alert" aria-live="assertive">
-    {{ errorMessage }}
-    <a *ngIf="errorMessage === translate.instant('FORM.ERROR.EMAIL_PHONE_TAKEN_API')" routerLink="/login">{{ 'APP.LOGIN' | translate }}</a>
+    <div *ngIf="errorMessage" class="api-error-message" role="alert" aria-live="assertive">
+      {{ errorMessage }}
+      <!-- <a *ngIf="errorMessage === translate.instant('FORM.ERROR.EMAIL_PHONE_TAKEN_API')" routerLink="/login">{{ 'APP.LOGIN' | translate }}</a> -->
+    </div>
+
+    <!-- Selecteur de langue -->
+    <div class="lang-selector">
+      <label>{{ 'APP.CHOOSE_LANG' | translate }} :</label>
+      <button type="button" (click)="changeLanguage('fr')" [class.active-lang]="currentLanguage === 'fr'">Français</button>
+      <button type="button" (click)="changeLanguage('en')" [class.active-lang]="currentLanguage === 'en'">English</button>
+    </div>
+
+    <form [formGroup]="inscriptionForm" (ngSubmit)="onSubmit()">
+      <!-- Gestion du prenom -->
+      <div class="form-group">
+        <label for="firstName">{{ 'FORM.FIRST_NAME' | translate }}</label>
+        <input 
+          type="text" 
+          id="firstName" 
+          formControlName="firstName" 
+          placeholder="{{ 'FORM.FIRST_NAME' | translate }}"
+          [attr.aria-describedby]="(fc['firstName'].invalid && fc['firstName'].touched) ? 'firstName-error' : null"
+        >
+        <div 
+          id="firstName-error" 
+          *ngIf="fc['firstName'].invalid && fc['firstName'].touched" 
+          class="error-message"
+        >
+          <span *ngIf="fc['firstName'].errors?.['required']">
+            {{ 'FORM.ERROR.REQUIRED' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Gestion du nom -->
+      <div class="form-group">
+        <label for="lastName">{{ 'FORM.LAST_NAME' | translate }}</label>
+        <input 
+          type="text" 
+          id="lastName" 
+          formControlName="lastName" 
+          placeholder="{{ 'FORM.LAST_NAME' | translate }}"
+          [attr.aria-describedby]="(fc['lastName'].invalid && fc['lastName'].touched) ? 'lastName-error' : null"
+        >
+        <div 
+          id="lastName-error" 
+          *ngIf="fc['lastName'].invalid && fc['lastName'].touched" 
+          class="error-message"
+        >
+          <span *ngIf="fc['lastName'].errors?.['required']">
+            {{ 'FORM.ERROR.REQUIRED' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Gestion de l'email ou du telephone -->
+      <div class="form-group">
+        <label for="emailPhone">{{ 'FORM.EMAIL_PHONE' | translate }}</label>
+        <input 
+          type="text" 
+          id="emailPhone" 
+          formControlName="emailPhone" 
+          placeholder="{{ 'FORM.EMAIL_PHONE_PLACEHOLDER' | translate }}"
+          [attr.aria-describedby]="((fc['emailPhone'].invalid && fc['emailPhone'].touched) || fc['emailPhone'].pending) ? 'emailPhone-error' : null"
+        >
+        <div *ngIf="fc['emailPhone'].pending" class="loading-message">
+          {{ 'FORM.CHECKING' | translate }}
+        </div>
+        <div 
+          id="emailPhone-error" 
+          *ngIf="fc['emailPhone'].invalid && fc['emailPhone'].touched" 
+          class="error-message"
+        >
+          <span *ngIf="fc['emailPhone'].errors?.['required']">
+            {{ 'FORM.ERROR.REQUIRED' | translate }}
+          </span>
+          <span *ngIf="fc['emailPhone'].errors?.['emailOrPhoneInvalid']">
+            {{ 'FORM.ERROR.EMAIL_OR_PHONE_INVALID' | translate }}
+          </span>
+          <span *ngIf="fc['emailPhone'].errors?.['emailPhoneTaken']">
+            {{ 'FORM.ERROR.EMAIL_PHONE_TAKEN' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Gestion du mot de passe -->
+      <div class="form-group">
+        <label for="password">{{ 'FORM.PASSWORD' | translate }}</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          placeholder="{{ 'FORM.PASSWORD_PLACEHOLDER' | translate }}"
+          [attr.aria-describedby]="(fc['password'].invalid && fc['password'].touched) ? 'password-error' : null"
+        >
+        <div 
+          id="password-error" 
+          *ngIf="fc['password'].invalid && fc['password'].touched" 
+          class="error-message"
+        >
+          <span *ngIf="fc['password'].errors?.['required']">
+            {{ 'FORM.ERROR.REQUIRED' | translate }}
+          </span>
+          <span *ngIf="fc['password'].errors?.['minlength']">
+            {{ 'FORM.ERROR.PASSWORD_MIN_LENGTH' | translate }}
+          </span>
+        </div>
+        <app-password-meter [password]="fc['password'].value || ''"></app-password-meter>
+      </div>
+
+      <!-- Gestion du consentement -->
+      <div class="form-group consent-group">
+        <input 
+          type="checkbox" 
+          id="consent" 
+          formControlName="consent"
+          [attr.aria-describedby]="(fc['consent'].invalid && fc['consent'].touched) ? 'consent-error' : null"
+        >
+        <label for="consent">{{ 'FORM.CONSENT' | translate }}</label>
+        <div 
+          id="consent-error" 
+          *ngIf="fc['consent'].invalid && fc['consent'].touched" 
+          class="error-message"
+        >
+          <span *ngIf="fc['consent'].errors?.['requiredTrue']">
+            {{ 'FORM.ERROR.CONSENT_REQUIRED' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Gestion du bouton de soumission -->
+      <button type="submit" [disabled]="inscriptionForm.invalid || isLoading">
+        <span *ngIf="!isLoading">{{ 'FORM.SUBMIT' | translate }}</span>
+        <span *ngIf="isLoading">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {{ 'FORM.SUBMITTING' | translate }}
+        </span>
+      </button>
+    </form>
   </div>
-
-  <!-- Sélecteur de langue -->
-  <div class="lang-selector">
-    <label>{{ 'APP.CHOOSE_LANG' | translate }} :</label>
-    <button type="button" (click)="changeLanguage('fr')" [class.active-lang]="currentLanguage === 'fr'">Français</button>
-    <button type="button" (click)="changeLanguage('en')" [class.active-lang]="currentLanguage === 'en'">English</button>
-  </div>
-
-  <form [formGroup]="inscriptionForm" (ngSubmit)="onSubmit()">
-    <!-- Prénom -->
-    <div class="form-group">
-      <label for="firstName">{{ 'FORM.FIRST_NAME' | translate }}</label>
-      <input 
-        type="text" 
-        id="firstName" 
-        formControlName="firstName" 
-        placeholder="{{ 'FORM.FIRST_NAME' | translate }}"
-        [attr.aria-describedby]="(fc['firstName'].invalid && fc['firstName'].touched) ? 'firstName-error' : null"
-      >
-      <div 
-        id="firstName-error" 
-        *ngIf="fc['firstName'].invalid && fc['firstName'].touched" 
-        class="error-message"
-      >
-        <span *ngIf="fc['firstName'].errors?.['required']">
-          {{ 'FORM.ERROR.REQUIRED' | translate }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Nom -->
-    <div class="form-group">
-      <label for="lastName">{{ 'FORM.LAST_NAME' | translate }}</label>
-      <input 
-        type="text" 
-        id="lastName" 
-        formControlName="lastName" 
-        placeholder="{{ 'FORM.LAST_NAME' | translate }}"
-        [attr.aria-describedby]="(fc['lastName'].invalid && fc['lastName'].touched) ? 'lastName-error' : null"
-      >
-      <div 
-        id="lastName-error" 
-        *ngIf="fc['lastName'].invalid && fc['lastName'].touched" 
-        class="error-message"
-      >
-        <span *ngIf="fc['lastName'].errors?.['required']">
-          {{ 'FORM.ERROR.REQUIRED' | translate }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Email ou Téléphone -->
-    <div class="form-group">
-      <label for="emailPhone">{{ 'FORM.EMAIL_PHONE' | translate }}</label>
-      <input 
-        type="text" 
-        id="emailPhone" 
-        formControlName="emailPhone" 
-        placeholder="{{ 'FORM.EMAIL_PHONE_PLACEHOLDER' | translate }}"
-        [attr.aria-describedby]="((fc['emailPhone'].invalid && fc['emailPhone'].touched) || fc['emailPhone'].pending) ? 'emailPhone-error' : null"
-      >
-      <div *ngIf="fc['emailPhone'].pending" class="loading-message">
-        {{ 'FORM.CHECKING' | translate }}
-      </div>
-      <div 
-        id="emailPhone-error" 
-        *ngIf="fc['emailPhone'].invalid && fc['emailPhone'].touched" 
-        class="error-message"
-      >
-        <span *ngIf="fc['emailPhone'].errors?.['required']">
-          {{ 'FORM.ERROR.REQUIRED' | translate }}
-        </span>
-        <span *ngIf="fc['emailPhone'].errors?.['emailOrPhoneInvalid']">
-          {{ 'FORM.ERROR.EMAIL_OR_PHONE_INVALID' | translate }}
-        </span>
-        <span *ngIf="fc['emailPhone'].errors?.['emailPhoneTaken']">
-          {{ 'FORM.ERROR.EMAIL_PHONE_TAKEN' | translate }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Mot de passe -->
-    <div class="form-group">
-      <label for="password">{{ 'FORM.PASSWORD' | translate }}</label>
-      <input 
-        type="password" 
-        id="password" 
-        formControlName="password" 
-        placeholder="{{ 'FORM.PASSWORD_PLACEHOLDER' | translate }}"
-        [attr.aria-describedby]="(fc['password'].invalid && fc['password'].touched) ? 'password-error' : null"
-      >
-      <div 
-        id="password-error" 
-        *ngIf="fc['password'].invalid && fc['password'].touched" 
-        class="error-message"
-      >
-        <span *ngIf="fc['password'].errors?.['required']">
-          {{ 'FORM.ERROR.REQUIRED' | translate }}
-        </span>
-        <span *ngIf="fc['password'].errors?.['minlength']">
-          {{ 'FORM.ERROR.PASSWORD_MIN_LENGTH' | translate }}
-        </span>
-      </div>
-      <app-password-meter [password]="fc['password'].value || ''"></app-password-meter>
-    </div>
-
-    <!-- Consentement -->
-    <div class="form-group consent-group">
-      <input 
-        type="checkbox" 
-        id="consent" 
-        formControlName="consent"
-        [attr.aria-describedby]="(fc['consent'].invalid && fc['consent'].touched) ? 'consent-error' : null"
-      >
-      <label for="consent">{{ 'FORM.CONSENT' | translate }}</label>
-      <div 
-        id="consent-error" 
-        *ngIf="fc['consent'].invalid && fc['consent'].touched" 
-        class="error-message"
-      >
-        <span *ngIf="fc['consent'].errors?.['requiredTrue']">
-          {{ 'FORM.ERROR.CONSENT_REQUIRED' | translate }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Bouton de soumission -->
-    <button type="submit" [disabled]="inscriptionForm.invalid || isLoading">
-      <span *ngIf="!isLoading">{{ 'FORM.SUBMIT' | translate }}</span>
-      <span *ngIf="isLoading">
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        {{ 'FORM.SUBMITTING' | translate }}
-      </span>
-    </button>
-  </form>
-</div>
+</section>
