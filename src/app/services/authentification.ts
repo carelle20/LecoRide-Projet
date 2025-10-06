@@ -10,12 +10,10 @@ export class Authentification {
 
   constructor(private http: HttpClient) {}
 
-  // Envoyer OTP au backend
   sendOtp(phone: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/send-otp`, { phone });
   }
 
-  // Vérifier OTP
   verifyOtp(phone: string, otp: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/verify-otp`, { phone, otp });
   }

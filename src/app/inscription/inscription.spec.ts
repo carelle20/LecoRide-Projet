@@ -8,7 +8,7 @@ import { PasswordMeter } from './password-meter/password-meter';
 import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
 
-// Ré-utilisation du validateur custom
+
 function emailOrPhoneValidator(): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;

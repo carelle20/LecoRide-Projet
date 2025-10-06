@@ -8,7 +8,6 @@ export class Tracking {
 
   track(eventName: string, properties: { [key: string]: any } = {}): void {
     console.log(`[TRACKING] Event: ${eventName}`, properties);
-    // Ici, tu intégreras plus tard ton outil d'analytics (Google Analytics, Mixpanel, etc.)
   }
   
 }

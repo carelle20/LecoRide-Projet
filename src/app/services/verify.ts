@@ -16,12 +16,12 @@ export class Verify {
     return this.http.post(`${this.apiUrl}/verify/resend-otp`, { phone });
   }
 
-  // email (on verra plus tard)
-  verifyEmail(token: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/verify/email?token=${token}`);
+  verifyEmail(token: string, email: string): Observable<any> { 
+    return this.http.get(`${this.apiUrl}/verify/email?token=${token}&email=${email}`);
   }
 
-  resendEmailLink(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/verify/resend-email`, {});
+  resendEmailLink(email: string): Observable<any> { 
+    return this.http.post(`${this.apiUrl}/verify/resend-email`, { email });
   }
+
 }

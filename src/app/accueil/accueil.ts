@@ -12,11 +12,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./accueil.scss']
 })
 export class Accueil {
-  // constructor(private router: Router) {}
-
-  // onContinue() {
-  //   this.router.navigateByUrl('inscription');
-  // }
 
 
 }

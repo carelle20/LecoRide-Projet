@@ -9,7 +9,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InscriptionForm } from '../models/inscription-form.model'; 
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+// import { HttpClient } from '@angular/common/http';
 
 // Validateur email/téléphone
 function emailOrPhoneValidator(): (control: AbstractControl) => ValidationErrors | null {
@@ -51,8 +51,8 @@ export class Inscription implements OnInit, OnDestroy {
     private userService: User, 
     private translate: TranslateService,
     private toastr: ToastrService,
-    private router: Router,
-    private http: HttpClient
+    private router: Router
+    // private http: HttpClient
   ) {
     this.translate.addLangs(['fr', 'en']);
     this.translate.setDefaultLang('fr');
@@ -86,7 +86,7 @@ export class Inscription implements OnInit, OnDestroy {
     this.currentLanguage = lang;
   }
 
-  // Verification de la disponibilite email ou telephone
+  // Vérification de la disponibilité email ou téléphone
   emailPhoneAvailabilityValidator: AsyncValidatorFn = (control: AbstractControl): Observable<ValidationErrors | null> => {
     const value = control.value;
     if (!value) return of(null);
@@ -114,7 +114,7 @@ export class Inscription implements OnInit, OnDestroy {
     
     this.subscriptions.add( 
       this.userService.register(formData).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           console.log('Inscription réussie !', response);
           this.isLoading = false; 
           
@@ -126,20 +126,15 @@ export class Inscription implements OnInit, OnDestroy {
           const phoneRegex = /^(0|\+237)6\d{8}$/;
           if (phoneRegex.test(formData.emailPhone)) {
             localStorage.setItem('phone', formData.emailPhone);
-
-            this.http.post('http://localhost:3000/api/auth/register', { phone: formData.emailPhone })
-              .subscribe({
-                next: () => {
-                  console.log("OTP généré et envoyé");
-                  this.router.navigate(['/otp']);
-                },
-                error: (err) => {
-                  console.error("Erreur génération OTP:", err);
-                  this.errorMessage = "Impossible de générer l’OTP.";
-                }
-              });
+            this.router.navigate(['/otp']);
           } else {
-            // this.router.navigate(['/verify-email']);
+            const registeredEmail = response.email || formData.emailPhone;
+            
+            this.toastr.warning("Veuillez vérifier votre boîte mail pour activer votre compte.");
+
+            this.router.navigate(['/email-confirmation'], { 
+            queryParams: { email: registeredEmail } 
+            });
           }
         },
         error: (err) => {
@@ -157,6 +152,7 @@ export class Inscription implements OnInit, OnDestroy {
       })
     );
   }
+
 
   get fc() {
     return this.inscriptionForm.controls;

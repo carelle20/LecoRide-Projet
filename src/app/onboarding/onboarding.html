@@ -1,0 +1,44 @@
+<div class="onboarding-container">
+    <h2>Bienvenue ! Finalisez votre profil.</h2>
+
+    <div class="stepper">
+        <div 
+            *ngFor="let step of steps; let i = index" 
+            class="step" 
+            [class.active]="isActive(step.id)"
+            [class.completed]="isCompleted(step.id)"
+        >
+            <span class="step-icon">{{ isCompleted(step.id) ? '✓' : step.icon }}</span>
+            <span class="step-name">{{ step.name }}</span>
+            <div *ngIf="i < steps.length - 1" class="step-line"></div>
+        </div>
+    </div>
+
+    <div class="step-content">
+        <div *ngIf="currentStep === 1">
+            <h3>Étape 1 : Hello !</h3>
+            <p>Nous sommes ravis de vous accueillir. Cliquez sur continuer pour démarrer la configuration de votre profil.</p>
+        </div>
+
+        <div *ngIf="currentStep === 2">
+            <h3>Étape 2 : Ajoutez une photo</h3>
+            <p>Une photo de profil aide les autres utilisateurs à vous reconnaître.</p>
+            <button class="btn btn-secondary">Choisir un fichier</button>
+        </div>
+
+        <div *ngIf="currentStep === 3">
+            <h3>Étape 3 : On y est !</h3>
+            <p>Votre compte est prêt. Vous allez être redirigé vers le tableau de bord.</p>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <button 
+            (click)="nextStep()" 
+            class="btn btn-primary"
+            [disabled]="isCompleted(steps.length)"
+        >
+            {{ currentStep < steps.length ? 'Continuer' : 'Terminer' }}
+        </button>
+    </div>
+</div>

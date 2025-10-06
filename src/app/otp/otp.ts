@@ -52,12 +52,13 @@ export class Otp implements OnInit, OnDestroy {
     this.startResendCooldown();
     this.phone = localStorage.getItem('phone');
 
-    if (this.phone) {
-      this.verifyService.resendOtp(this.phone).subscribe({
-        next: () => console.log("OTP généré automatiquement"),
-        error: (err) => console.error("Erreur génération OTP:", err)
-      });
+    if (!this.phone) {
+        // Gérer l'erreur si le numéro de téléphone n'est pas trouvé
+        this.toastr.error("Numéro de téléphone introuvable. Veuillez vous réinscrire.");
+        this.router.navigate(['/inscription']);
+        return;
     }
+
   }
 
   ngOnDestroy(): void {
@@ -117,7 +118,7 @@ export class Otp implements OnInit, OnDestroy {
       next: () => {
         this.trackingService.track('VerifySucceeded', { type: 'OTP' });
         this.toastr.success("Vérification réussie ! Bienvenue");
-        // this.router.navigate(['/dashboard']); 
+        this.router.navigate(['/onboarding']);
       },
       error: (err) => {
         this.attempts++;

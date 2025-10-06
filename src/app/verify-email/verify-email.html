@@ -1,0 +1,29 @@
+<div class="verify-container">
+    <h2>Vérification de l'e-mail</h2>
+
+    <div *ngIf="isVerifying" class="loading">
+        <div class="spinner"></div>
+        <p>{{ message || 'Vérification en cours, veuillez patienter...' }}</p>
+    </div>
+
+    <div *ngIf="!isVerifying">
+        <p [class.success]="success" [class.error]="!success">
+            {{ message }}
+        </p>
+
+        <div *ngIf="success" class="redirect-msg">
+            <small>Redirection vers la page d'onboarding...</small>
+        </div>
+        
+        <div *ngIf="expired && email" class="resend-action">
+            <p>Le lien n'est plus valide ?</p>
+            <button (click)="resendLink()" class="btn btn-primary">
+                Renvoyer le lien de vérification
+            </button>
+        </div>
+        <div *ngIf="expired && !email" class="resend-action">
+            <p>Impossible de renvoyer le lien sans l'adresse email.</p>
+        </div>
+
+    </div>
+</div>
