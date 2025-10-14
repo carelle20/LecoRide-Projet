@@ -37,6 +37,7 @@ export class Onboarding implements OnInit {
   finishOnboarding(): void {
     
     console.log("Onboarding terminé ! Redirection vers le tableau de bord.");
+    this.router.navigate(['/dashboard']);
 
   }
 

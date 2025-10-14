@@ -1,0 +1,168 @@
+/* Fichier: src/app/login/login.component.scss */
+
+// ----------------------------------------------------
+// 1. Conteneur principal (Réutilise .form-container)
+// ----------------------------------------------------
+.form-container {
+    margin-top: 100px; 
+    padding: 20px;
+
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; // Alignement en haut, comme dans l'inscription
+    background: #f4f4f9;
+    min-height: calc(100vh - 100px);
+}
+
+// ----------------------------------------------------
+// 2. Conteneur de connexion (Réutilise le style inscription-container)
+// ----------------------------------------------------
+.login-container {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* Plus étroit que l'inscription (800px) */
+    
+    // Ajout d'une zone pour le message 'Pas encore de compte'
+    .login-footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 0.95rem;
+        
+        a {
+            color: #669c20; // Utiliser la couleur d'accentuation
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+// ----------------------------------------------------
+// 3. Titre (Réutilise le style H2)
+// ----------------------------------------------------
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    color: #333;
+}
+
+// ----------------------------------------------------
+// 4. Formulaire (Adapté pour une seule colonne)
+// ----------------------------------------------------
+form {
+    display: grid;
+    grid-template-columns: 1fr; // Une seule colonne
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    input {
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+
+        &:focus {
+            border-color: #bae0faff;
+            outline: none;
+        }
+    }
+}
+
+/* Bouton submit (Réutilise le style submit) */
+button[type="submit"] {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #669c20;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: 600;
+    margin-top: 10px; // Espacement après les champs
+    
+    // Styles pour le spinner si vous utilisez la classe d'Angular/Bootstrap
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+        border: 0.1em solid currentColor;
+        border-right-color: transparent;
+    }
+
+    &:hover:not(:disabled) {
+        background: #d17d0eff; // Couleur hover de l'inscription
+    }
+
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+}
+
+/* Lien Mot de passe oublié */
+.forgot-password-link {
+    display: block; // Prend toute la largeur
+    text-align: right; // Alignement à droite
+    font-size: 0.95rem;
+    margin-top: -10px; /* Remonter un peu vers le champ */
+    margin-bottom: 20px;
+    
+    a {
+        color: #669c20;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+/* Messages d'erreur */
+.error-message {
+    color: #d9534f;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.api-error-message {
+    background: #ffe5e5;
+    border: 1px solid #d9534f;
+    color: #d9534f;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+// Media Query n'est pas nécessaire pour une colonne, mais on peut l'inclure
+// pour le conteneur principal si besoin.
+@media (max-width: 768px) {
+    .inscription-container {
+        padding: 20px;
+    }
+}

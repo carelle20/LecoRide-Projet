@@ -5,5 +5,8 @@
   <nav class="nav-links">
     <a routerLink="/inscription" class="btn">S'inscrire</a>
     <a routerLink="/connexion" class="btn">Se connecter</a>
+    <button *ngIf="isLoggedIn" (click)="onLogout()" class="btn btn-danger">
+      Déconnexion
+    </button>
   </nav>
 </header>
