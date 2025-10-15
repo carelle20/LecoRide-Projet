@@ -4,6 +4,15 @@ import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { InscriptionForm } from '../models/inscription-form.model';
 
+//Interface pour la réponse de l'API Register
+interface RegisterResponse {
+  success: boolean;
+  type: 'phone' | 'email';
+  message: string;
+  phone?: string;
+  email?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +28,9 @@ export class User {
     return of(!unavailable.includes(value)).pipe(delay(50));
   }
 
-  register(userData: InscriptionForm): Observable<any> {
+  register(userData: InscriptionForm): Observable<RegisterResponse> {
     console.log('Attempting to register user via API:', userData);
     
-    return this.http.post(`${this.apiUrl}/register`, userData);
-    
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, userData);
   }
 }

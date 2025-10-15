@@ -1,13 +1,11 @@
-/* Fichier: src/app/dashboard/dashboard.component.scss */
-
-$primary-color: #669c20; // Le vert de votre thème
-$secondary-color: #d17d0eff; // L'orange/brun pour le danger/logout
+$primary-color: #669c20; 
+$secondary-color: #d17d0eff; 
 $bg-light: #f4f4f9;
 
 .dashboard-container {
     padding: 40px 20px;
     background-color: $bg-light;
-    min-height: calc(100vh - 100px); /* Ajusté pour la hauteur de l'écran */
+    min-height: calc(100vh - 100px);
     text-align: center;
 }
 

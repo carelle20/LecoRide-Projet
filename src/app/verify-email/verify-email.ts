@@ -35,25 +35,24 @@ export class VerifyEmail implements OnInit, OnDestroy {
     private tracking: Tracking
   ) {}
 
-  ngOnInit(): void {
-    this.routeSubscription = this.route.queryParams.subscribe(params => {
-      this.token = params['token'];
-      this.email = params['email'];
+ngOnInit(): void {
+  this.routeSubscription = this.route.queryParams.subscribe(params => {
+    this.token = params['token'];
+    this.email = params['email'];
 
-      console.log(">>> Paramètres reçus depuis l'URL (Observable):", { token: this.token, email: this.email });
+    console.log(">>> Paramètres reçus depuis l'URL (Observable):", { token: this.token, email: this.email });
 
-      if (this.token && this.email && this.isVerifying) {
-        this.callVerificationApi();
-      } else if (!this.token || !this.email) {
-        this.isVerifying = false;
-        this.success = false;
-        this.expired = true; 
-        this.message = "Lien de vérification invalide ou incomplet.";
-        this.toastr.error(this.message);
-      }
-    });
-    this.isVerifying = false;
-  }
+    if (this.token && this.email) {
+      this.callVerificationApi();
+    } else { 
+      this.isVerifying = false;
+      this.success = false;
+      this.expired = true; 
+      this.message = "Lien de vérification invalide ou incomplet.";
+      this.toastr.error(this.message);
+    }
+  });
+}
 
   ngOnDestroy(): void {
       if (this.routeSubscription) {
@@ -64,33 +63,30 @@ export class VerifyEmail implements OnInit, OnDestroy {
   private callVerificationApi(): void {
     if (!this.token || !this.email) return;
 
+    this.isVerifying = true; 
     this.tracking.track('EmailVerify_Started', { email: this.email, token: 'received' });
     
     this.verifyService.verifyEmail(this.token, this.email).subscribe({
       next: (res: any) => {
-        console.log(">>> Réponse backend:", res);
         this.isVerifying = false;
         this.success = true;
         this.expired = false;
-        this.message = res.message || "Votre email a été vérifié avec succès.";
-        this.toastr.success(this.message);
-
-        this.tracking.track('EmailVerify_Succeeded', { email: this.email });
-
-        setTimeout(() => {
-          this.router.navigate(['/onboarding']);
-        }, 3000);
       },
       error: (err) => {
-        console.error(">>> Erreur backend:", err);
-        this.isVerifying = false;
+        this.isVerifying = false; 
         this.success = false;
         
-        if (err.status === 401 || err.status === 403) { 
-            this.tracking.track('EmailVerify_Failed_Expired', { email: this.email });
-        } else {
-            this.tracking.track('EmailVerify_Failed_Generic', { email: this.email, status: err.status });
+        const errorMessage = err.error?.message || "Une erreur est survenue.";
+        this.message = errorMessage;
+        
+        if (err.status === 403) { 
+          this.expired = true; 
+          this.tracking.track('EmailVerify_Failed_Expired', { email: this.email });
+        } else { 
+          this.expired = false; 
+          this.tracking.track('EmailVerify_Failed_Generic', { email: this.email, status: err.status });
         }
+        
         this.toastr.error(this.message);
       }
     });

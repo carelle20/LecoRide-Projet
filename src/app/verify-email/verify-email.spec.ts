@@ -2,10 +2,12 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { VerifyEmail } from './verify-email'; 
 import { Verify } from '../services/verify'; 
 import { Tracking } from '../services/tracking'; 
 import { CommonModule } from '@angular/common';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 const mockVerifyService = {
   verifyEmail: jasmine.createSpy('verifyEmail'),
@@ -21,6 +23,11 @@ const mockTrackingService = {
 };
 
 const mockActivatedRoute = {
+  queryParams: of({
+    token: 'valid-test-token',
+    email: 'test@example.com'
+  }),
+
   snapshot: {
     queryParams: {
       token: 'valid-test-token',
@@ -35,21 +42,29 @@ describe('VerifyEmail Component', () => {
   let fixture: ComponentFixture<VerifyEmail>;
 
   beforeEach(async () => {
+    const toastrServiceSpy = jasmine.createSpyObj('ToastrService', ['success', 'error', 'warning']); 
     await TestBed.configureTestingModule({
-      imports: [VerifyEmail, CommonModule, HttpClientTestingModule],
+      imports: [VerifyEmail, 
+        CommonModule, 
+        HttpClientTestingModule, 
+        RouterTestingModule,
+        HttpClientTestingModule, 
+        ToastrModule.forRoot()
+      ],
       providers: [
         { provide: Verify, useValue: mockVerifyService },
         { provide: Router, useValue: mockRouter },
         { provide: Tracking, useValue: mockTrackingService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: ToastrService, useValue: toastrServiceSpy } 
       ]
     }).compileComponents();
+    
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(VerifyEmail);
     component = fixture.componentInstance;
-    
     mockVerifyService.verifyEmail.calls.reset();
     mockVerifyService.resendEmailLink.calls.reset();
     mockRouter.navigate.calls.reset();
@@ -82,10 +97,12 @@ describe('VerifyEmail Component', () => {
 
   
   it('devrait gérer l\'expiration (403) et afficher le bouton de renvoi', fakeAsync(() => {
-    mockVerifyService.verifyEmail.and.returnValue(throwError(() => ({ 
-      status: 403, 
-      error: { success: false, message: 'Le lien a expiré.' } 
-    })));
+    const errorResponse = {
+        status: 403, 
+        error: { message: 'Le lien a expiré.' } 
+    };
+    
+    mockVerifyService.verifyEmail.and.returnValue(throwError(() => errorResponse));
 
     tick(); 
     expect(component.expired).toBe(true); 

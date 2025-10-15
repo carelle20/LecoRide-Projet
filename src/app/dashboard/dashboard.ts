@@ -13,7 +13,6 @@ import { Router } from '@angular/router';
 })
 export class Dashboard implements OnInit {
   
-  // Supposons que nous ayons une information utilisateur simple
   userName: string = 'Utilisateur Connecté'; 
 
   constructor(
@@ -23,21 +22,14 @@ export class Dashboard implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // 💡 Exemple : On pourrait charger les données utilisateur ici
-    // const userData = this.tokenService.getUserDataFromToken();
-    // if (userData) {
-    //   this.userName = userData.firstName;
-    // }
 
     console.log('Dashboard chargé. L\'AuthGuard a réussi.');
   }
 
-  /**
-   * Gère la déconnexion de l'utilisateur.
-   * La méthode logout dans Authentification gère déjà la purge des tokens et la redirection.
-   */
+
+  //Gère la déconnexion de l'utilisateur.
+
   onLogout(): void {
     this.authService.logout();
-    // L'utilisateur sera redirigé vers /login par le service
   }
 }

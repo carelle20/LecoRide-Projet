@@ -32,8 +32,6 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
-          // L'erreur 401 doit être gérée si elle n'est pas déjà dans le processus de rafraîchissement
-          // et si la requête n'est PAS la requête de rafraîchissement elle-même.
           if (this.isRefreshing) {
             // Si on est déjà en rafraîchissement, mettre la requête en attente
             return this.refreshTokenSubject.pipe(
@@ -46,7 +44,6 @@ export class AuthInterceptor implements HttpInterceptor {
           return this.handle401Error(request, next);
         }
         
-        // Pour toute autre erreur, la propager
         return throwError(() => error);
       })
     );
@@ -64,7 +61,7 @@ export class AuthInterceptor implements HttpInterceptor {
   // Logique complexe pour gérer le rafraîchissement
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
     this.isRefreshing = true;
-    this.refreshTokenSubject.next(null); // Bloque les requêtes suivantes
+    this.refreshTokenSubject.next(null); 
 
     // VRAI APPEL DE REFRESH TOKEN
     return this.authService.refreshToken().pipe(
@@ -76,13 +73,11 @@ export class AuthInterceptor implements HttpInterceptor {
         return next.handle(this.addToken(request, tokens.accessToken));
       }),
       catchError((err) => {
-        // Si le rafraîchissement échoue (Refresh Token invalide/expiré)
+        // Si le rafraîchissement échoue 
         this.isRefreshing = false;
-        this.authService.logout(); // Déconnexion complète
-        // NOTE : Une redirection vers la page de login devra être ajoutée ici ou dans le logout
+        this.authService.logout();
         return throwError(() => err);
       }),
-      // S'assurer que le flag est réinitialisé, même en cas d'erreur non gérée
       finalize(() => {
         this.isRefreshing = false;
       })

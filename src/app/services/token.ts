@@ -13,9 +13,7 @@ export class Token {
    * 1. Stocke les tokens après une connexion ou un rafraîchissement réussi.
    */
   setTokens(accessToken: string, refreshToken: string): void {
-    // Stockage du jeton d'accès (Access Token)
     localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
-    // Stockage du jeton de rafraîchissement (Refresh Token) - pour la persistance
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
   }
 
@@ -27,21 +25,21 @@ export class Token {
   }
 
   /**
-   * 3. Récupère le jeton de rafraîchissement pour la requête de renouvellement (401).
+   * 3. Récupère le jeton de rafraîchissement pour la requête de renouvellement 
    */
   getRefreshToken(): string | null {
     return localStorage.getItem(this.REFRESH_TOKEN_KEY);
   }
   
   /**
-   * 4. Vérifie si l'utilisateur est potentiellement connecté (pour l'AuthGuard).
+   * 4. Vérifie si l'utilisateur est potentiellement connecté 
    */
   isLoggedIn(): boolean {
     return !!this.getAccessToken() && !!this.getRefreshToken();
   }
 
   /**
-   * 5. Supprime tous les tokens du stockage (Logout).
+   * 5. Supprime tous les tokens du stockage 
    */
   clearTokens(): void {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);

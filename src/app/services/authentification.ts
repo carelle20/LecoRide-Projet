@@ -4,11 +4,27 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment'; 
 import { Token } from './token';
 import { Router } from '@angular/router';
+import { UserProfile } from '../models/user.model'; 
 
-interface AuthTokens {
+//Interface pour les AuthTokens
+export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
-  user: any; 
+  user: UserProfile; 
+}
+
+//Interface pour la réponse des appels d'OTP
+interface OtpResponse {
+    success: boolean;
+    message: string;
+    phone?: string; 
+}
+
+//Interface pour les données de l'utilisateur à enregistrer
+interface RegistrationData {
+    name: string;
+    phone: string;
+    password: string;
 }
 
 @Injectable({
@@ -17,7 +33,6 @@ interface AuthTokens {
 export class Authentification {
   // private apiUrl = 'http://localhost:3000/api/auth';
   private apiUrl = environment.apiUrl + '/auth';
-  token: any;
 
   constructor(
     private http: HttpClient, 
@@ -25,16 +40,16 @@ export class Authentification {
     private router: Router
   ) {}
 
-  sendOtp(phone: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/send-otp`, { phone });
+  sendOtp(phone: string): Observable<OtpResponse> {
+    return this.http.post<OtpResponse>(`${this.apiUrl}/send-otp`, { phone });
   }
 
-  verifyOtp(phone: string, otp: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/verify-otp`, { phone, otp });
+  verifyOtp(phone: string, otp: string): Observable<OtpResponse> {
+    return this.http.post<OtpResponse>(`${this.apiUrl}/verify-otp`, { phone, otp });
   }
 
-  registerUser(data: { name: string; phone: string; password: string }) {
-    return this.http.post(`${this.apiUrl}/register`, data);
+  registerUser(data: RegistrationData) {
+    return this.http.post<OtpResponse>(`${this.apiUrl}/register`, data); 
   }
 
   login(emailPhone: string, password: string): Observable<AuthTokens> {
@@ -49,7 +64,6 @@ export class Authentification {
       const refreshToken = this.tokenService.getRefreshToken();
       
       if (refreshToken) {
-          // 💡 URL de la déconnexion : /api/auth/logout
           this.http.post(`${this.apiUrl}/logout`, { refreshToken }).subscribe({
               next: () => console.log('Déconnexion serveur réussie.'),
               error: (err) => console.warn('Erreur lors de la déconnexion serveur (continue la déconnexion locale).', err)
@@ -64,7 +78,7 @@ export class Authentification {
     return this.tokenService.isLoggedIn();
   }
   
-// 4. Renouvellement du token - (Préparé pour l'Interceptor)
+//Renouvellement du token 
   refreshToken(): Observable<AuthTokens> {
     const refreshToken = this.tokenService.getRefreshToken();
     if (!refreshToken) {
@@ -72,7 +86,7 @@ export class Authentification {
       return new Observable<AuthTokens>(observer => observer.error('Refresh Token missing'));
     }
     
-    // 💡 Point d'API pour rafraîchir le token
+    //Point d'API pour rafraîchir le token
     return this.http.post<AuthTokens>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
         tap(tokens => {
             this.tokenService.setTokens(tokens.accessToken, tokens.refreshToken);
@@ -82,7 +96,7 @@ export class Authentification {
 
   // Méthode utilitaire pour l'Interceptor
   public getAccessToken(): string | null {
-    // 💡 Utilisation du service Token
+    //Utilisation du service Token
     return this.tokenService.getAccessToken();
   }
 
