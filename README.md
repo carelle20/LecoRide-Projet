@@ -16,7 +16,7 @@ Le projet suit l'architecture modulaire standard d'Angular, organisée par fonct
 
   * **`src/app/auth`**: Gère l'ensemble des pages d'authentification (`Login`, `Inscription`).
   * **`src/app/models`**: Gère la definition des proprietes d'un utilisateur.
-  * **`src/app/services`**: Contient les services d'interaction avec l'API (ex: `VerifyService`, `AuthService`). Ces services sont injectés dans les composants pour assurer un bon découplage (DIP).
+  * **`src/app/services`**: Contient les services d'interaction avec l'API ( `Verify`, `AuthService`). Ces services sont injectés dans les composants pour assurer un bon découplage (DIP).
   * **`src/environments`**: Contient les variables d'environnement spécifiques aux contextes de développement et de production.
 
 ### 2\. Démarrage et Consignes de Build/CI
@@ -25,6 +25,7 @@ Le projet est construit avec Angular CLI. Pour démarrer, assurez-vous d'avoir N
 
 1.  **Installation des dépendances :** Utilisez `npm install`.
 2.  **Lancement du développement :** La commande `ng serve` lance le serveur de développement local à l'adresse `http://localhost:4200/`.
+3.  **Lancement du serveur backend :** La commande `node src/server.js` lance le serveur backend local à l'adresse `http://localhost:3000/`.
 
 ### 3\. Variables d'Environnement
 
