@@ -9,7 +9,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// 💡 Montage du routeur d'authentification
+// Montage du routeur d'authentification
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
