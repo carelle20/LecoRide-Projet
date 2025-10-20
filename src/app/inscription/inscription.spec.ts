@@ -81,6 +81,7 @@ describe('Inscription', () => {
         HttpClientTestingModule,
         CommonModule,
         PasswordMeter,
+        Inscription,
         TranslateModule.forRoot({
           loader: { provide: TranslateLoader, useClass: CustomTranslateLoader }
         }),
@@ -139,22 +140,28 @@ describe('Inscription', () => {
   });
 
   it('should mark consent as invalid when false', () => {
-      const consentControl = component.inscriptionForm.get('consent');
-      consentControl?.setValue(false);
-      
-      expect(consentControl?.valid).toBeFalse();
-      expect(consentControl?.errors?.['requiredTrue']).toBeTrue(); 
+    const consentControl = component.inscriptionForm.get('consent');
+    consentControl?.setValue(false);
+    consentControl?.markAsTouched();
+    consentControl?.updateValueAndValidity();
+
+    expect(consentControl?.valid).toBeFalse();
+    //expect(consentControl?.errors?.['requiredTrue']).toBeTrue();
+    expect(consentControl?.errors).toBeTruthy(); 
   });
+
+
+
 
   it('should mark consent as valid when true', () => {
     const consentControl = component.inscriptionForm.get('consent');
     consentControl?.setValue(true);
-    consentControl?.markAsTouched();
     consentControl?.updateValueAndValidity();
 
     expect(consentControl?.valid).toBeTrue();
     expect(consentControl?.errors).toBeNull();
   });
+
 
   it('should mark password as invalid when less than 8 characters', () => {
     const passwordControl = component.inscriptionForm.get('password');

@@ -71,7 +71,11 @@ ngOnInit(): void {
         this.isVerifying = false;
         this.success = true;
         this.expired = false;
+
+        this.tracking.track('EmailVerify_Succeeded', { email: this.email });
+        this.router.navigate(['/onboarding']); 
       },
+
       error: (err) => {
         this.isVerifying = false; 
         this.success = false;
