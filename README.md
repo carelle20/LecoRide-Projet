@@ -1,59 +1,67 @@
-# Formulaire
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.5.
+# [LecoRide-Projet]
 
-## Development server
 
-To start a local development server, run:
+## Revue Qualité - Documentation du Projet
 
-```bash
-ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ce document sert de support pour une comprehension globale du projet.
 
-## Code scaffolding
+Le lien GitHub public pour ce dépôt est : `https://github.com/carelle20/LecoRide-Projet`.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
+### 1\. Architecture et Responsabilités du Projet
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Le projet suit l'architecture modulaire standard d'Angular, organisée par fonctionnalité.
 
-```bash
-ng generate --help
-```
+  * **`src/app/auth`**: Gère l'ensemble des pages d'authentification (`Login`, `Inscription`).
+  * **`src/app/models`**: Gère la definition des proprietes d'un utilisateur.
+  * **`src/app/services`**: Contient les services d'interaction avec l'API ( `Verify`, `AuthService`). Ces services sont injectés dans les composants pour assurer un bon découplage (DIP).
+  * **`src/environments`**: Contient les variables d'environnement spécifiques aux contextes de développement et de production.
 
-## Building
+### 2\. Démarrage et Consignes de Build/CI
 
-To build the project run:
+Le projet est construit avec Angular CLI. Pour démarrer, assurez-vous d'avoir Node.js (v22.14.0) installé.
 
-```bash
-ng build
-```
+1.  **Installation des dépendances :** Utilisez `npm install`.
+2.  **Lancement du développement :** La commande `ng serve` lance le serveur de développement local à l'adresse `http://localhost:4200/`.
+3.  **Lancement du serveur backend :** La commande `node src/server.js` lance le serveur backend local à l'adresse `http://localhost:3000/`.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### 3\. Variables d'Environnement
 
-## Running unit tests
+La configuration des environnements est gérée via le dossier `src/environments/`. Les variables essentielles sont :
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+  * `API_BASE_URL`: L'URL de base du backend API (`https://api.lecoride.com/`).
 
-```bash
-ng test
-```
+Pour configurer une nouvelle variable, elle doit être ajoutée aux fichiers `environment.ts` (dev) et `environment.prod.ts` (production).
 
-## Running end-to-end tests
+### 4\. Tests Unitaires et e2e
 
-For end-to-end (e2e) testing, run:
+#### a. Tests Unitaires
 
-```bash
-ng e2e
-```
+Les tests unitaires sont implémentés avec Jasmine pour le framework test et Karma comme lanceur de tests. la commande pour lanacer le test est 'ng test'.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+#### b. Tests End-to-End (e2e)
 
-## Additional Resources
+Les tests e2e sont implémentés avec Cypress
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+  * **Scénarios couverts :
+      * Connexion réussie et redirection vers le tableau de bord.
+      * Validation et soumission correcte du formulaire d'inscription sans le consentement utilisateur.
+      * Test du cycle complet de la vérification OTP (échec, blocage, et réussite).
+
+
+### 5\. Routes et Tickets
+
+Voici la cartographie des routes de l'application liées aux tickets fonctionnels majeurs :
+
+  * **`/inscription`** : Formulaire d'inscription utilisateur.
+  * **`/otp`** : Composant de vérification du code OTP.
+  * **`/verify-email?token=...`** : Gestion du lien de vérification par email.
+  * **`/login` ou `/authentification`** : Page de connexion.
+
+
+
+-----
+
+Pour plus d'informations, laissez-nous un message. Merci \!
