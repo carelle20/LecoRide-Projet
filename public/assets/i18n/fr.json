@@ -38,7 +38,7 @@
       "STRONG": "Mot de passe fort",
       "VERY_STRONG": "Mot de passe très fort",
       "COMPLEX": "Mot de passe complexe",
-      "SOLID": "Mot de passe solide"
+      "SOLID": "Mot de passe valide"
     },
     "SUCCESS_MESSAGE": "Inscription réussie ! Un email de confirmation a été envoyé."
   }

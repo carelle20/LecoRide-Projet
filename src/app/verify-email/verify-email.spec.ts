@@ -22,11 +22,17 @@ const mockTrackingService = {
   track: jasmine.createSpy('track'),
 };
 
+const mockActivatedRouteNoParams = {
+    queryParams: of({}), // Observable qui émet un objet vide
+    snapshot: { queryParams: {} }
+};
+
 const mockActivatedRoute = {
   queryParams: of({
     token: 'valid-test-token',
     email: 'test@example.com'
   }),
+  
 
   snapshot: {
     queryParams: {
@@ -40,9 +46,10 @@ const mockActivatedRoute = {
 describe('VerifyEmail Component', () => {
   let component: VerifyEmail;
   let fixture: ComponentFixture<VerifyEmail>;
+  let toastrServiceSpy: jasmine.SpyObj<ToastrService>;
 
   beforeEach(async () => {
-    const toastrServiceSpy = jasmine.createSpyObj('ToastrService', ['success', 'error', 'warning']); 
+    toastrServiceSpy = jasmine.createSpyObj('ToastrService', ['success', 'error', 'warning', 'info']); 
     await TestBed.configureTestingModule({
       imports: [VerifyEmail, 
         CommonModule, 
@@ -56,7 +63,7 @@ describe('VerifyEmail Component', () => {
         { provide: Router, useValue: mockRouter },
         { provide: Tracking, useValue: mockTrackingService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: ToastrService, useValue: toastrServiceSpy } 
+        { provide: ToastrService, useValue: toastrServiceSpy }
       ]
     }).compileComponents();
     
@@ -141,9 +148,7 @@ describe('VerifyEmail Component', () => {
     expect(component.message).toContain('invalide');
   }));
 
-
-  //Renvoi du lien
-
+  // Renvoi du lien
   it('devrait appeler le service de renvoi et afficher un message de succès', fakeAsync(() => {
     component.expired = true;
     component.email = 'test@example.com';
@@ -161,4 +166,143 @@ describe('VerifyEmail Component', () => {
     expect(component.expired).toBe(false); 
     expect(mockTrackingService.track).toHaveBeenCalledWith('EmailResend_Succeeded', jasmine.anything());
   }));
+
+  // 5. Couverture de ngOnInit 
+  it('doit échouer l\'initialisation si le token ou l\'email sont manquants dans l\'URL', async () => {
+      // 1. Réinitialiser l'environnement de test. 
+      TestBed.resetTestingModule(); 
+      
+      // 2. Reconfigurer l'environnement iniquement pour ce test 
+      await TestBed.configureTestingModule({
+          imports: [
+              VerifyEmail, 
+              CommonModule, 
+              HttpClientTestingModule, 
+              RouterTestingModule, 
+              ToastrModule.forRoot()
+          ],
+          providers: [
+              { provide: ActivatedRoute, useValue: mockActivatedRouteNoParams }, 
+              { provide: Verify, useValue: mockVerifyService },
+              { provide: Router, useValue: mockRouter },
+              { provide: Tracking, useValue: mockTrackingService },
+              { provide: ToastrService, useValue: toastrServiceSpy }
+          ]
+      }).compileComponents();
+      
+      // 3. Créer le composant avec la nouvelle configuration
+      const fixtureNoParams = TestBed.createComponent(VerifyEmail);
+      const componentNoParams = fixtureNoParams.componentInstance;
+      
+      // Déclenche ngOnInit qui prend la route vide
+      fixtureNoParams.detectChanges(); 
+      
+      // Vérifications
+      expect(componentNoParams.isVerifying).toBe(false);
+      expect(componentNoParams.expired).toBe(true); 
+      expect(componentNoParams.message).toBe("Lien de vérification invalide ou incomplet.");
+      expect(toastrServiceSpy.error).toHaveBeenCalled();
+      
+      // 4. Réinitialiser à nouveau l'environnement pour le `beforeEach` suivant.
+      TestBed.resetTestingModule(); 
+  });
+
+  // 6. Couverture de callVerificationApi
+  it('ne doit pas appeler le service si le token ou l\'email sont nulls (retours anticipés)', () => {
+      // S'assurer que le service n'a pas été appelé par ngOnInit
+      mockVerifyService.verifyEmail.calls.reset(); 
+      
+      // CAS 1 : Token manquant
+      component.token = null;
+      component.email = 'test@example.com';
+      
+      component['callVerificationApi']();
+      
+      // COUVERTURE
+      expect(mockVerifyService.verifyEmail).not.toHaveBeenCalled();
+      mockVerifyService.verifyEmail.calls.reset(); 
+      
+      // CAS 2 : Email manquant
+      component.token = 'valid-token';
+      component.email = null;
+      component['callVerificationApi']();
+      
+      expect(mockVerifyService.verifyEmail).not.toHaveBeenCalled();
+  });
+
+  // 7. Couverture de callVerificationApi
+  it('doit gérer l\'erreur de vérification serveur sans message API (Message par défaut)', fakeAsync(() => {
+      component.token = 'valid-token';
+      component.email = 'test@example.com';
+      
+      // Simuler l'appel du service qui renvoie une erreur sans corps 'error.message'
+      mockVerifyService.verifyEmail.and.returnValue(throwError(() => ({ 
+          status: 500, 
+          error: {} // Corps vide
+      })));
+
+      component['callVerificationApi'](); 
+      tick();
+      expect(component.success).toBe(false);
+      expect(component.expired).toBe(false);
+      expect(component.message).toBe("Une erreur est survenue.");
+      expect(mockTrackingService.track).toHaveBeenCalledWith('EmailVerify_Failed_Generic', jasmine.anything());
+      expect(toastrServiceSpy.error).toHaveBeenCalledWith("Une erreur est survenue.");
+  }));
+
+// 8. Couverture de resendLink()
+it('ne doit pas appeler le service de renvoi si l\'email est null (retour anticipé)', () => {
+    component.email = null;
+    
+    component.resendLink();
+    
+    // COUVERTURE : if (!this.email) return;
+    expect(mockVerifyService.resendEmailLink).not.toHaveBeenCalled();
+});
+
+it('doit gérer l\'erreur de renvoi de lien (resendLink error)', fakeAsync(() => {
+    component.email = 'test@example.com';
+    
+    // Simuler l'erreur
+    mockVerifyService.resendEmailLink.and.returnValue(throwError(() => ({ 
+        status: 429, 
+        error: { message: 'Trop de requêtes.' } 
+    })));
+    
+    component.resendLink();
+    tick();
+
+    expect(component.isVerifying).toBe(false);
+    expect(component.expired).toBe(true);
+    expect(component.message).toBe('Trop de requêtes.');
+    expect(toastrServiceSpy.error).toHaveBeenCalledWith('Trop de requêtes.');
+    expect(mockTrackingService.track).toHaveBeenCalledWith('EmailResend_Failed', jasmine.anything());
+}));
+
+  it('doit gérer l\'erreur de renvoi sans message API (resendLink error générique)', fakeAsync(() => {
+      component.email = 'test@example.com';
+
+      mockVerifyService.resendEmailLink.and.returnValue(throwError(() => ({ 
+          status: 500, 
+          error: {} 
+      })));
+      
+      component.resendLink();
+      tick();
+      
+      expect(component.message).toBe("Échec de l'envoi du nouveau lien. Veuillez réessayer plus tard.");
+  }));
+
+  // 9. Couverture de ngOnDestroy()
+  it('doit se désabonner de routeSubscription dans ngOnDestroy', () => {
+      expect(component['routeSubscription']).toBeTruthy();     
+      const unsubscribeSpy = spyOn(component['routeSubscription']!, 'unsubscribe');      
+      component.ngOnDestroy();
+      expect(unsubscribeSpy).toHaveBeenCalled();
+      
+      // Couverture du cas où la subscription est null
+      component['routeSubscription'] = null;
+      component.ngOnDestroy();
+      expect(component['routeSubscription']).toBeNull();
+  });
 });

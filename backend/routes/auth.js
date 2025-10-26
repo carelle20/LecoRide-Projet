@@ -1,5 +1,3 @@
-// Fichier: routes/auth.js
-
 import { Router } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -7,8 +5,8 @@ import nodemailer from 'nodemailer';
 
 const router = Router();
 let otpStore = {}; 
-let users = {}; // Stockage local simple des utilisateurs (perdu au redémarrage)
-let emailTokens = {}; // Non utilisé, mais peut être conservé si vous le développez
+let users = {}; 
+// let emailTokens = {};
 
 const JWT_SECRET = 'clesDeSecuriteSecurisees';
 
@@ -34,9 +32,7 @@ function normalizePhone(phone) {
 }
 
 
-// =========================================================================
-// 1. ROUTE D'INSCRIPTION (POST /register)
-// =========================================================================
+// 1. ROUTE D'INSCRIPTION 
 router.post('/register', async (req, res) => {
     console.log(">>> Nouvelle inscription reçue:", req.body);
     const { firstName, lastName, emailPhone, password } = req.body;
@@ -46,7 +42,7 @@ router.post('/register', async (req, res) => {
          return res.status(400).json({ success: false, message: 'Ce compte existe déjà.' });
     }
     
-    // Sauvegarde de l'utilisateur (non vérifié initialement)
+    // Sauvegarde de l'utilisateur
     users[userKey] = { firstName, lastName, password, isVerified: false };
 
     const phoneRegex = /^(0|\+237)6\d{8}$/;
@@ -70,7 +66,6 @@ router.post('/register', async (req, res) => {
 
     // Email
     if (emailRegex.test(emailPhone)) {
-        // ... (Logique d'envoi d'email avec JWT inchangée) ...
         const token = jwt.sign({ email: emailPhone }, JWT_SECRET, { expiresIn: '5m' });
         const verificationLink = `http://localhost:4200/verify-email?token=${token}&email=${encodeURIComponent(emailPhone)}`;
         console.log(`Lien de vérification généré : ${verificationLink}`);
@@ -103,9 +98,7 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Email ou téléphone invalide.' });
 });
 
-// =========================================================================
-// 2. ROUTE DE CONNEXION (POST /connexion) - CORRECTION DU 404
-// =========================================================================
+// 2. ROUTE DE CONNEXION 
 router.post('/connexion', async (req, res) => {
     console.log(">>> Tentative de connexion:", req.body);
     const { emailPhone, password } = req.body;
@@ -123,7 +116,7 @@ router.post('/connexion', async (req, res) => {
         return res.status(401).json({ message: "Veuillez vérifier votre compte avant de vous connecter." });
     }
 
-    // 3. Succès: Génération des tokens JWT simulés
+    // 3. Succès: Génération des tokens JWT
     const accessToken = jwt.sign({ id: userKey, name: user.firstName }, JWT_SECRET, { expiresIn: '15m' });
     const refreshToken = crypto.randomBytes(64).toString('hex');
 
@@ -137,29 +130,24 @@ router.post('/connexion', async (req, res) => {
 });
 
 
-// =========================================================================
-// 3. ROUTE DE DÉCONNEXION (POST /logout)
-// =========================================================================
+// 3. ROUTE DE DÉCONNEXION 
 router.post('/logout', (req, res) => {
-    // Le client Angular purge les tokens, le serveur renvoie un succès.
     console.log("Déconnexion serveur simulée.");
     res.status(200).json({ message: "Déconnexion serveur réussie." });
 });
 
 
-// =========================================================================
-// 4. ROUTE DE VÉRIFICATION OTP (POST /verify/otp)
-// =========================================================================
+// 4. ROUTE DE VÉRIFICATION OTP
 router.post('/verify/otp', (req, res) => {
     let { otp, phone } = req.body;
-    phone = normalizePhone(phone); // Utilisé comme clé OTP
+    phone = normalizePhone(phone);
 
     if (!otpStore[phone] || otpStore[phone] !== otp) {
         return res.status(400).json({ success: false, message: 'OTP incorrect ou expiré.' });
     }
     
     // L'OTP est valide, on marque l'utilisateur comme vérifié pour la connexion
-    // On utilise la version non normalisée pour chercher la clé dans 'users' (si elle existe)
+    // On utilise la version non normalisée pour chercher la clé dans 'users' 
     if (users[phone]) {
          users[phone].isVerified = true; 
     }
@@ -168,9 +156,7 @@ router.post('/verify/otp', (req, res) => {
     return res.json({ success: true, message: 'OTP valide. Bienvenue !' });
 });
 
-// 5. Autres routes 
-
-//Renvoyer OTP
+// 5. ROUTE DE RENVOI OTP
 router.post('/verify/resend-otp', (req, res) => {
     let { phone } = req.body;
     phone = normalizePhone(phone);
@@ -188,7 +174,7 @@ router.post('/verify/resend-otp', (req, res) => {
 });
 
 
-//Vérification email
+// 6. ROUTE DE VERIFICATION EMAIL
 router.get('/verify/email', (req, res) => {
     const { token, email } = req.query;
     
@@ -202,6 +188,19 @@ router.get('/verify/email', (req, res) => {
         //Vérifier si l'email dans le token correspond à l'email dans l'URL
         if (decoded.email !== email) {
             return res.status(401).json({ success: false, message: "Erreur de vérification. Les informations ne correspondent pas." });
+        }
+
+        // Récupérer l'utilisateur
+        const user = users[email]; 
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Utilisateur introuvable." });
+        }
+
+        // MARQUER L'UTILISATEUR COMME VÉRIFIÉ
+        if (!user.isVerified) {
+            user.isVerified = true;
+            console.log(`Utilisateur ${email} vérifié.`);
         }
         
         return res.json({
@@ -223,7 +222,7 @@ router.get('/verify/email', (req, res) => {
 });
 
 
-//Renvoyer lien email
+// 7. ROUTE DE RENVOI EMAIL
 router.post('/verify/resend-email', async (req, res) => {
     const { email } = req.body;
 

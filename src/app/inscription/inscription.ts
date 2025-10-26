@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 // import { HttpClient } from '@angular/common/http';
 
 // Validateur email/téléphone
-function emailOrPhoneValidator(): (control: AbstractControl) => ValidationErrors | null {
+export function emailOrPhoneValidator(): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
     if (!value) return null; 
@@ -89,7 +89,7 @@ export class Inscription implements OnInit, OnDestroy {
   // Vérification de la disponibilité email ou téléphone
   emailPhoneAvailabilityValidator: AsyncValidatorFn = (control: AbstractControl): Observable<ValidationErrors | null> => {
     const value = control.value;
-    if (!value) return of(null);
+    // if (!value) return of(null);
 
     return timer(100).pipe(
       switchMap(() => this.userService.checkAvailability(value).pipe(

@@ -39,19 +39,19 @@ export class Authentification {
     private tokenService: Token, 
     private router: Router
   ) {}
-
+  //Envoi OTP
   sendOtp(phone: string): Observable<OtpResponse> {
     return this.http.post<OtpResponse>(`${this.apiUrl}/send-otp`, { phone });
   }
-
+  //Verification OTP
   verifyOtp(phone: string, otp: string): Observable<OtpResponse> {
     return this.http.post<OtpResponse>(`${this.apiUrl}/verify-otp`, { phone, otp });
   }
-
+  //Inscription utilisateur
   registerUser(data: RegistrationData) {
     return this.http.post<OtpResponse>(`${this.apiUrl}/register`, data); 
   }
-
+  //  Connexion
   login(emailPhone: string, password: string): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.apiUrl}/connexion`, { emailPhone, password }).pipe(
       tap(tokens => {
@@ -59,17 +59,15 @@ export class Authentification {
       })
     );
   }
-  
+  //Deconnexion
   logout(): void {
-      const refreshToken = this.tokenService.getRefreshToken();
-      
+      const refreshToken = this.tokenService.getRefreshToken();     
       if (refreshToken) {
           this.http.post(`${this.apiUrl}/logout`, { refreshToken }).subscribe({
               next: () => console.log('Déconnexion serveur réussie.'),
               error: (err) => console.warn('Erreur lors de la déconnexion serveur (continue la déconnexion locale).', err)
           });
       }
-
       this.tokenService.clearTokens(); 
       this.router.navigate(['/connexion']); 
   }
@@ -78,14 +76,13 @@ export class Authentification {
     return this.tokenService.isLoggedIn();
   }
   
-//Renouvellement du token 
+  //Renouvellement du token 
   refreshToken(): Observable<AuthTokens> {
     const refreshToken = this.tokenService.getRefreshToken();
     if (!refreshToken) {
       // Si le refresh token est manquant, l'utilisateur n'est pas loggué
       return new Observable<AuthTokens>(observer => observer.error('Refresh Token missing'));
     }
-    
     //Point d'API pour rafraîchir le token
     return this.http.post<AuthTokens>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
         tap(tokens => {
@@ -96,8 +93,6 @@ export class Authentification {
 
   // Méthode utilitaire pour l'Interceptor
   public getAccessToken(): string | null {
-    //Utilisation du service Token
     return this.tokenService.getAccessToken();
   }
-
 }

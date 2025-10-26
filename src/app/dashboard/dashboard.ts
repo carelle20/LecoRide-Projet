@@ -28,7 +28,6 @@ export class Dashboard implements OnInit {
 
 
   //Gère la déconnexion de l'utilisateur.
-
   onLogout(): void {
     this.authService.logout();
   }

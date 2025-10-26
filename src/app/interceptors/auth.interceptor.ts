@@ -58,12 +58,12 @@ export class AuthInterceptor implements HttpInterceptor {
     });
   }
 
-  // Logique complexe pour gérer le rafraîchissement
+  // Logique pour gérer le rafraîchissement
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
     this.isRefreshing = true;
     this.refreshTokenSubject.next(null); 
 
-    // VRAI APPEL DE REFRESH TOKEN
+    // Appel de refresh token
     return this.authService.refreshToken().pipe(
       switchMap((tokens: any) => {
         this.isRefreshing = false;

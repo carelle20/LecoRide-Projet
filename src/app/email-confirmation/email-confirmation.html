@@ -5,16 +5,13 @@
     <p *ngIf="userEmail">
         Nous avons envoyé un lien de vérification à l'adresse {{ userEmail }}.
     </p>
-    <p *ngIf="!userEmail">
-        Un email de vérification a été envoyé.
-    </p>
 
     <p class="instruction">
-        Veuillez cliquer sur le lien contenu dans cet email pour finaliser votre inscription.
+        Veuillez cliquer sur ce lien pour finaliser votre inscription.
     </p>
 
     <div class="info">
-        <small>Le lien est valable pendant 24 heures. Si vous ne le trouvez pas, vérifiez votre dossier spam.</small>
+        <small>Le lien est valable pendant 5 minutes. Si vous ne le trouvez pas, vérifiez votre dossier spam.</small>
     </div>
     
     </div>
