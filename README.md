@@ -39,13 +39,13 @@ Pour configurer une nouvelle variable, elle doit être ajoutée aux fichiers `en
 
 #### a. Tests Unitaires
 
-Les tests unitaires sont implémentés avec Jasmine pour le framework test et Karma comme lanceur de tests. la commande pour lanacer le test est 'ng test'.
+Les tests unitaires sont implémentés avec Jasmine pour le framework test et Karma comme lanceur de tests. la commande pour lanacer le test est `ng test`.
 
 #### b. Tests End-to-End (e2e)
 
-Les tests e2e sont implémentés avec Cypress
+Les tests e2e sont implémentés avec Cypress. Installer Cypress avec la commande `npm install cypress --save-dev` et dans le fichier package.json ajouter dans la section "scripts" la ligne "cypress:open". Pour lancer donc le test cypress taper dans un autre terminal la commande `npx cypress open` apres avoir lance le projet avec `ng serve`.
 
-  * **Scénarios couverts :
+  * Scénarios couverts :
       * Connexion réussie et redirection vers le tableau de bord.
       * Validation et soumission correcte du formulaire d'inscription sans le consentement utilisateur.
       * Test du cycle complet de la vérification OTP (échec, blocage, et réussite).
@@ -59,9 +59,3 @@ Voici la cartographie des routes de l'application liées aux tickets fonctionnel
   * **`/otp`** : Composant de vérification du code OTP.
   * **`/verify-email?token=...`** : Gestion du lien de vérification par email.
   * **`/login` ou `/authentification`** : Page de connexion.
-
-
-
------
-
-Pour plus d'informations, laissez-nous un message. Merci \!
